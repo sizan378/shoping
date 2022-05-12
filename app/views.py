@@ -22,7 +22,14 @@ class ProductView(View):
         mobile = Product.objects.filter(category='M')
         if request.user.is_authenticated:
             totalitem = len(Cart.objects.filter(user=request.user))
-        return render(request,'app/home.html',{'bottomwear':bottomwear,'mobile':mobile,'topwear':topwear,'totalitem':totalitem})
+        
+        context ={
+            'bottomwear':bottomwear,
+            'mobile':mobile,
+            'topwear':topwear,
+            'totalitem':totalitem
+        }
+        return render(request,'app/home.html',context)
 
 
 class ProductDetailView(View):
@@ -31,7 +38,11 @@ class ProductDetailView(View):
         item_already_in_cart = False
         if request.user.is_authenticated:
             item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
-        return render(request,'app/productdetail.html',{'product':product,'item_already_in_cart':item_already_in_cart})
+        context = {
+            'product':product,
+            'item_already_in_cart':item_already_in_cart
+        }
+        return render(request,'app/productdetail.html',context)
 
 @login_required
 def add_to_cart(request):
@@ -131,7 +142,10 @@ def buy_now(request):
 @login_required
 def address(request):
     add = Customer.objects.filter(user=request.user)
-    return render(request, 'app/address.html',{'add':add,'active':'btn-primary'})
+    context = {
+        'add':add,'active':'btn-primary'
+    }
+    return render(request, 'app/address.html',context)
 
 
 @login_required
